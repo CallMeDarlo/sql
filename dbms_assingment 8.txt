@@ -1,0 +1,57 @@
+ASSIGNMENT 8: DBMS
+
+1. set serveroutput on; 
+create trigger route_detail_trigger
+before delete
+on route_detail
+for each row
+begin
+raise_application_error(-20001,'You cannot delete it');
+end;
+/
+SQL> delete from route_detail where route_id=108;
+delete from route_detail where route_id=108
+            *
+ERROR at line 1:
+ORA-20001: You cannot delete it
+ORA-06512: at "IT19.ROUTE_DETAIL_TRIGGER", line 2
+ORA-04088: error during execution of trigger 'IT19.ROUTE_DETAIL_TRIGGER'
+
+2.
+create table route_header_1(
+Route_id number(2),
+day char(12)
+);
+
+insert into route_header_1(route_id, day)
+values(1, 'Monday');
+insert into route_header_1(route_id, day)
+values(2, 'Tuesday');
+insert into route_header_1(route_id, day)
+values(3, 'Wednesday');
+insert into route_header_1(route_id, day)
+values(4, 'Thursday');
+insert into route_header_1(route_id, day)
+values(5, 'Friday');
+
+
+create or replace trigger trigger1
+before delete or insert or update
+on route_header_1
+for each row
+declare
+t char(12);
+t:=to_char(sysdate,'day');
+begin
+IF t IN ('Monday','Tuesday','Wednesday') THEN
+RAISE_APPLICATION_ERROR(-20001,'NOT ALLOWING THIS OPERATION');
+END IF;
+END;
+/
+SQL> delete from route_detail where day='Monday';
+delete from route_detail where day='Monday'
+            *
+ERROR at line 1:
+ORA-20001: NOT ALLOWING THIS OPERATION
+ORA-06512: at "IT19.ROUTE_DETAIL_TRIGGER", line 2
+ORA-04088: error during execution of trigger 'IT19.ROUTE_DETAIL_TRIGGER'
